@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Chave Pix Autolem</title>
+</head>
+<body>
+<style>
+/* Layout: one centered card on a plain ground, key and button stacked. */
+:root {
+  --bg: #f4f6f5;
+  --card: #ffffff;
+  --fg: #1d2421;
+  --muted: #5b6661;
+  --accent: #0f7a6a;
+  --accent-fg: #ffffff;
+  --ok: #17704a;
+  --line: #dfe5e2;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111715;
+    --card: #1a221f;
+    --fg: #e8efec;
+    --muted: #9aa8a2;
+    --accent: #3fb7a3;
+    --accent-fg: #0b1412;
+    --ok: #6fd3a4;
+    --line: #2a3531;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111715;
+  --card: #1a221f;
+  --fg: #e8efec;
+  --muted: #9aa8a2;
+  --accent: #3fb7a3;
+  --accent-fg: #0b1412;
+  --ok: #6fd3a4;
+  --line: #2a3531;
+  color-scheme: dark;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px;
+  box-sizing: border-box;
+}
+.wrap {
+  min-height: calc(100vh - 64px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 28px 24px;
+  text-align: center;
+  box-sizing: border-box;
+}
+.label {
+  margin: 0 0 6px;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+h1 {
+  margin: 0 0 20px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-wrap: balance;
+}
+.key {
+  display: block;
+  margin: 0 0 20px;
+  padding: 14px 12px;
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 1rem;
+  word-break: break-all;
+  user-select: all;
+}
+button {
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font: inherit;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+}
+button:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+#msg {
+  min-height: 1.4em;
+  margin: 12px 0 0;
+  font-size: 0.95rem;
+  color: var(--ok);
+}
+@media (prefers-reduced-motion: no-preference) {
+  button { transition: opacity 0.15s ease; }
+  button:active { opacity: 0.8; }
+}
+</style>
+
+<div class="wrap">
+  <main class="card">
+    <p class="label">Pagamento via Pix</p>
+    <h1>Chave Pix Autolem</h1>
+    <code class="key" id="chave">cfcautolembrrs.financeiro@gmail.com</code>
+    <button type="button" id="copiar">Copiar chave Pix</button>
+    <p id="msg" role="status" aria-live="polite"></p>
+  </main>
+</div>
+
+<script>
+  (function () {
+    var chave = document.getElementById("chave").textContent.trim();
+    var botao = document.getElementById("copiar");
+    var msg = document.getElementById("msg");
+
+    function copiadoOk() {
+      msg.textContent = "Chave copiada!";
+    }
+
+    function copiarFallback() {
+      var area = document.createElement("textarea");
+      area.value = chave;
+      area.setAttribute("readonly", "");
+      area.style.position = "fixed";
+      area.style.opacity = "0";
+      document.body.appendChild(area);
+      area.select();
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+      area.remove();
+      if (ok) {
+        copiadoOk();
+      } else {
+        msg.textContent = "Não consegui copiar. Toque e segure a chave acima para selecionar.";
+      }
+    }
+
+    botao.addEventListener("click", function () {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(chave).then(copiadoOk, copiarFallback);
+      } else {
+        copiarFallback();
+      }
+    });
+  })();
+</script>
+</body>
+</html>
